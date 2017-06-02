@@ -93,11 +93,32 @@ func (suite *UpdateTestSuite) TestDescribeNoOptions() {
 	assert.Equal(suite.T(), string(expectedOutput), suite.capturedOutput.String())
 }
 
-func (suite *UpdateTestSuite) TestPrintStatus() {
-	printStatus()
+func (suite *UpdateTestSuite) TestPrintStatusRaw() {
+	suite.responseBody = suite.loadFile("testdata/responses/cosmos/1.10/enterprise/update.json")
+	printStatus(true)
+
+	// assert request is what we expect
+	expectedRequest := suite.loadFile("testdata/requests/update-configuration.json")
+	assert.JSONEq(suite.T(), string(expectedRequest), string(suite.requestBody))
+
+	// assert CLI output is what we expect
 	expectedOutput := "Status has not been implemented yet. Please use `dcos hello-world --name=hello-world plan show` to view progress.\n"
 	assert.Equal(suite.T(), string(expectedOutput), suite.capturedOutput.String())
 }
+
+func (suite *UpdateTestSuite) TestPrintStatusTree() {
+	suite.responseBody = suite.loadFile("testdata/responses/cosmos/1.10/enterprise/update.json")
+	printStatus(false)
+
+	// assert request is what we expect
+	expectedRequest := suite.loadFile("testdata/requests/update-configuration.json")
+	assert.JSONEq(suite.T(), string(expectedRequest), string(suite.requestBody))
+
+	// assert CLI output is what we expect
+	expectedOutput := "Status has not been implemented yet. Please use `dcos hello-world --name=hello-world plan show` to view progress.\n"
+	assert.Equal(suite.T(), string(expectedOutput), suite.capturedOutput.String())
+}
+
 func (suite *UpdateTestSuite) TestUpdateConfiguration() {
 	suite.responseBody = suite.loadFile("testdata/responses/cosmos/1.10/enterprise/update.json")
 	doUpdate("testdata/input/config.json", "")
